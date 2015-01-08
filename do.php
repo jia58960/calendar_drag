@@ -82,7 +82,7 @@ if($action=='add'){
 	}
 
 	$isallday = $isallday?1:0;
-        $sql = "update `calendar` set `title`='$events',`starttime`='$starttime',`endtime`='$endtime',`allday`='$isallday' where `id`='$id'";
+        $sql = "update `calendar` set `title`='$events',`id`='$id',`starttime`='$starttime',`endtime`='$endtime',`allday`='$isallday' where `id`='$id'";
 	mysqli_query($link, $sql);//执行新增
 	if(mysqli_affected_rows($link)==1){
 		echo '1';

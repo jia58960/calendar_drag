@@ -9,7 +9,7 @@ while($row=mysqli_fetch_array($query)){
 	$is_allday = $allday==1?true:false;
 	
 	$data[] = array(
-		'id' => $row['id'],
+		'id' => $row['cid'],
 		'title' => $row['title'],
 		'start' => date('Y-m-d H:i',$row['starttime']),
 		'end' => date('Y-m-d H:i',$row['endtime']),
@@ -18,5 +18,11 @@ while($row=mysqli_fetch_array($query)){
 		'color' => $row['color']
 	);
 }
+$data2 = array(
+	'id'=> 999,
+    'title'=> 'Repeating Event',
+    'start'=> time(),
+    'allDay'=> false
+	);
 echo json_encode($data);
 ?>

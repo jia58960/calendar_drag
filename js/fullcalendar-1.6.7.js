@@ -162,7 +162,7 @@ $.fn.fullCalendar = function(options) {
 		options
 	);
 	
-	
+
 	this.each(function(i, _element) {
 		var element = $(_element);
 		var calendar = new Calendar(element, options, eventSources);
@@ -983,8 +983,9 @@ function EventManager(options, _sources) {
 		});
 	}
 	
-	
+	//zhangjia
 	function _fetchEventSource(source, callback) {
+
 		var i;
 		var fetchers = fc.sourceFetchers;
 		var res;
@@ -1050,6 +1051,7 @@ function EventManager(options, _sources) {
 				$.ajax($.extend({}, ajaxDefaults, source, {
 					data: data,
 					success: function(events) {
+
 						events = events || [];
 						var res = applyAll(success, this, arguments);
 						if ($.isArray(res)) {
@@ -1079,6 +1081,7 @@ function EventManager(options, _sources) {
 	
 
 	function addEventSource(source) {
+
 		source = _addEventSource(source);
 		if (source) {
 			pendingSourceCnt++;
@@ -1706,8 +1709,10 @@ function _exclEndDay(end, allDay) {
 -----------------------------------------------------------------------------*/
 
 
-function lazySegBind(container, segs, bindHandlers) {
+function lazySegBind(container, segs, bindHandlers) { //zhangjia 绑定事件
+
 	container.unbind('mouseover').mouseover(function(ev) {
+
 		var parent=ev.target, e,
 			i, seg;
 		while (parent != this) {
@@ -3704,7 +3709,7 @@ function AgendaEventRenderer() {
 	/* Rendering
 	----------------------------------------------------------------------------*/
 	
-
+	// 事件渲染入口 zhangjia
 	function renderEvents(events, modifiedEventId) {
 		var i, len=events.length,
 			dayEvents=[],
@@ -4052,7 +4057,6 @@ function AgendaEventRenderer() {
 				hoverListener.start(function(cell, origCell) {
 					clearOverlays();
 					if (cell) {
-						debugger;
 						revert = false;
 						var origDate = cellToDate(0, origCell.col);
 						var date = cellToDate(0, cell.col);
@@ -4717,12 +4721,12 @@ function View(element, calendar, viewName) {
 	
 	
 	function showEvents(event, exceptElement) {
-		eachEventElement(event, exceptElement, 'show');
+		eachEventElement(event, exceptElement, 'red');
 	}
 	
 	
 	function hideEvents(event, exceptElement) {
-		eachEventElement(event, exceptElement, 'hide');
+		eachEventElement(event, exceptElement, 'blue');
 	}
 	
 	
@@ -4731,10 +4735,13 @@ function View(element, calendar, viewName) {
 		// and multiple segments per event
 		var elements = eventElementsByID[event._id],
 			i, len = elements.length;
+
 		for (i=0; i<len; i++) {
-			if (!exceptElement || elements[i][0] != exceptElement[0]) {
+
+			/*if (!exceptElement || elements[i][0] != exceptElement[0]) {
 				elements[i][funcName]();
-			}
+			}*/
+			elements[i].css('background',funcName);
 		}
 	}
 	
@@ -4745,6 +4752,7 @@ function View(element, calendar, viewName) {
 	
 	
 	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui) {
+
 		var oldAllDay = event.allDay;
 		var eventId = event._id;
 		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay);
@@ -5096,9 +5104,7 @@ function DayEventRenderer() {
 	// exports
 	t.renderDayEvents = renderDayEvents;
 	t.draggableDayEvent = draggableDayEvent; // made public so that subclasses can override
-	t.resizableDayEvent = resizableDayEvent; // "
-	
-	
+
 	// imports
 	var opt = t.opt;
 	var trigger = t.trigger;
@@ -5137,6 +5143,7 @@ function DayEventRenderer() {
 	// Render `events` onto the calendar, attach mouse event handlers, and call the `eventAfterRender` callback for each.
 	// Mouse event will be lazily applied, except if the event has an ID of `modifiedEventId`.
 	// Can only be called when the event container is empty (because it wipes out all innerHTML).
+	// zhangjia 渲染日事件
 	function renderDayEvents(events, modifiedEventId) {
 
 		// do the actual rendering. Receive the intermediate "segment" data structures.
@@ -5620,8 +5627,9 @@ function DayEventRenderer() {
 	---------------------------------------------------------------------------------------------------*/
 	// TODO: better documentation!
 
-
+	// zhangjia
 	function attachHandlers(segments, modifiedEventId) {
+
 		var segmentContainer = getDaySegmentContainer();
 
 		segmentElementEach(segments, function(segment, element, i) {
@@ -5643,13 +5651,6 @@ function DayEventRenderer() {
 			t.draggableDayEvent(event, eventElement, segment); // use `t` so subclasses can override
 		}
 
-		if (
-			segment.isEnd && // only allow resizing on the final segment for an event
-			isEventResizable(event)
-		) {
-			t.resizableDayEvent(event, eventElement, segment); // use `t` so subclasses can override
-		}
-
 		// attach all other handlers.
 		// needs to be after, because resizableDayEvent might stopImmediatePropagation on click
 		eventElementHandlers(event, eventElement);
@@ -5666,7 +5667,8 @@ function DayEventRenderer() {
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 				trigger('eventDragStart', eventElement, event, ev, ui);
-				eventElement.css('background','blue'); //zhangjia
+
+				//eventElement.css('background','blue'); //zhangjia
 				hideEvents(event, eventElement);
 				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
@@ -5694,113 +5696,13 @@ function DayEventRenderer() {
 				}else{
 					eventElement.css('filter', ''); // clear IE opacity side-effects
 					showEvents(event, eventElement);
-					eventElement.css('background','red');
+					//eventElement.css('background','red');
 				}
 			}
 		});
 	}
 
-	
-	function resizableDayEvent(event, element, segment) {
-		var isRTL = opt('isRTL');
-		var direction = isRTL ? 'w' : 'e';
-		var handle = element.find('.ui-resizable-' + direction); // TODO: stop using this class because we aren't using jqui for this
-		var isResizing = false;
-		
-		// TODO: look into using jquery-ui mouse widget for this stuff
-		disableTextSelection(element); // prevent native <a> selection for IE
-		element
-			.mousedown(function(ev) { // prevent native <a> selection for others
-				ev.preventDefault();
-			})
-			.click(function(ev) {
-				if (isResizing) {
-					ev.preventDefault(); // prevent link from being visited (only method that worked in IE6)
-					ev.stopImmediatePropagation(); // prevent fullcalendar eventClick handler from being called
-					                               // (eventElementHandlers needs to be bound after resizableDayEvent)
-				}
-			});
-		
-		handle.mousedown(function(ev) {
-			if (ev.which != 1) {
-				return; // needs to be left mouse button
-			}
-			isResizing = true;
-			var hoverListener = getHoverListener();
-			var rowCnt = getRowCnt();
-			var colCnt = getColCnt();
-			var elementTop = element.css('top');
-			var dayDelta;
-			var helpers;
-			var eventCopy = $.extend({}, event);
-			var minCellOffset = dayOffsetToCellOffset( dateToDayOffset(event.start) );
-			clearSelection();
-			$('body')
-				.css('cursor', direction + '-resize')
-				.one('mouseup', mouseup);
-			trigger('eventResizeStart', this, event, ev);
-			hoverListener.start(function(cell, origCell) {
-				if (cell) {
 
-					var origCellOffset = cellToCellOffset(origCell);
-					var cellOffset = cellToCellOffset(cell);
-
-					// don't let resizing move earlier than start date cell
-					cellOffset = Math.max(cellOffset, minCellOffset);
-
-					dayDelta =
-						cellOffsetToDayOffset(cellOffset) -
-						cellOffsetToDayOffset(origCellOffset);
-
-					if (dayDelta) {
-						eventCopy.end = addDays(eventEnd(event), dayDelta, true);
-						var oldHelpers = helpers;
-
-						helpers = renderTempDayEvent(eventCopy, segment.row, elementTop);
-						helpers = $(helpers); // turn array into a jQuery object
-
-						helpers.find('*').css('cursor', direction + '-resize');
-						if (oldHelpers) {
-							oldHelpers.remove();
-						}
-
-						hideEvents(event);
-					}
-					else {
-						if (helpers) {
-							showEvents(event);
-							helpers.remove();
-							helpers = null;
-						}
-					}
-					clearOverlays();
-					renderDayOverlay( // coordinate grid already rebuilt with hoverListener.start()
-						event.start,
-						addDays( exclEndDay(event), dayDelta )
-						// TODO: instead of calling renderDayOverlay() with dates,
-						// call _renderDayOverlay (or whatever) with cell offsets.
-					);
-				}
-			}, ev);
-			
-			function mouseup(ev) {
-				trigger('eventResizeStop', this, event, ev);
-				$('body').css('cursor', '');
-				hoverListener.stop();
-				clearOverlays();
-				if (dayDelta) {
-					eventResize(this, event, dayDelta, 0, ev);
-					// event redraw will clear helpers
-				}
-				// otherwise, the drag handler already restored the old events
-				
-				setTimeout(function() { // make this happen after the element's click event
-					isResizing = false;
-				},0);
-			}
-		});
-	}
-	
 
 }
 
@@ -5912,6 +5814,7 @@ function SelectionManager() {
 	
 	
 	function daySelectionMousedown(ev) { // not really a generic manager method, oh well
+		debugger;
 		var cellToDate = t.cellToDate;
 		var getIsCellAllDay = t.getIsCellAllDay;
 		var hoverListener = t.getHoverListener();
