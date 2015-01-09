@@ -162,7 +162,7 @@ $.fn.fullCalendar = function(options) {
 		options
 	);
 	
-
+debugger;
 	this.each(function(i, _element) {
 		var element = $(_element);
 		var calendar = new Calendar(element, options, eventSources);
@@ -528,6 +528,7 @@ function Calendar(element, options, eventSources) {
 	
 	// called when event data arrives
 	function reportEvents(_events) {
+
 		events = _events;
 		renderEvents();
 	}
@@ -904,7 +905,7 @@ function EventManager(options, _sources) {
 	t.fetchEvents = fetchEvents;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
-	t.updateEvent = updateEvent;
+	//t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
@@ -977,6 +978,7 @@ function EventManager(options, _sources) {
 				}
 				pendingSourceCnt--;
 				if (!pendingSourceCnt) {
+
 					reportEvents(cache);
 				}
 			}
@@ -1001,6 +1003,8 @@ function EventManager(options, _sources) {
 				return;
 			}
 		}
+
+		var events = source.events;
 		var events = source.events;
 		if (events) {
 			if ($.isFunction(events)) {
@@ -1051,7 +1055,6 @@ function EventManager(options, _sources) {
 				$.ajax($.extend({}, ajaxDefaults, source, {
 					data: data,
 					success: function(events) {
-
 						events = events || [];
 						var res = applyAll(success, this, arguments);
 						if ($.isArray(res)) {
@@ -1121,8 +1124,9 @@ function EventManager(options, _sources) {
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
 	
-	
-	function updateEvent(event) { // update an existing event
+	// zhangjia
+	/*function updateEvent(event) { // update an existing event
+
 		var i, len = cache.length, e,
 			defaultEventEnd = getView().defaultEventEnd, // getView???
 			startDelta = event.start - event._start,
@@ -1154,12 +1158,14 @@ function EventManager(options, _sources) {
 				normalizeEvent(e);
 			}
 		}
+
 		normalizeEvent(event);
 		reportEvents(cache);
-	}
+	}*/
 	
 	
 	function renderEvent(event, stick) {
+
 		normalizeEvent(event);
 		if (!event.source) {
 			if (stick) {
@@ -5097,6 +5103,10 @@ function View(element, calendar, viewName) {
 
 ;;
 
+/* DayEventRenderer.js START
+ * zhangfile
+ * 
+ */
 function DayEventRenderer() {
 	var t = this;
 
@@ -5202,7 +5212,7 @@ function DayEventRenderer() {
 	// Set `doAppend` to `true` for rendering elements without clearing the existing container.
 	// Set `doRowHeights` to allow setting the height of each row, to compensate for vertical event overflow.
 	function _renderDayEvents(events, doAppend, doRowHeights) {
-
+		debugger;
 		// where the DOM nodes will eventually end up
 		var finalContainer = getDaySegmentContainer();
 
@@ -5744,10 +5754,15 @@ function compareDaySegments(a, b) {
 		a.event.start - b.event.start || // if a tie, sort by event start date
 		(a.event.title || '').localeCompare(b.event.title) // if a tie, sort by event title
 }
-
+/*
+ * DayEventRenderer.js END
+ */
 
 ;;
 
+/*
+ * SelectionManager.js START
+ */
 //BUG: unselect needs to be triggered when events are dragged+dropped
 
 function SelectionManager() {
@@ -5814,7 +5829,7 @@ function SelectionManager() {
 	
 	
 	function daySelectionMousedown(ev) { // not really a generic manager method, oh well
-		debugger;
+
 		var cellToDate = t.cellToDate;
 		var getIsCellAllDay = t.getIsCellAllDay;
 		var hoverListener = t.getHoverListener();
@@ -5846,7 +5861,9 @@ function SelectionManager() {
 
 
 }
-
+/*
+ * SelectionManager.js END
+ */
 ;;
  
 function OverlayManager() {
