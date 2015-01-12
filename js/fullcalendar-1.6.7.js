@@ -162,17 +162,14 @@ $.fn.fullCalendar = function(options) {
 		options
 	);
 	
-debugger;
 	this.each(function(i, _element) {
 		var element = $(_element);
 		var calendar = new Calendar(element, options, eventSources);
 		element.data('fullCalendar', calendar); // TODO: look into memory leak implications
 		calendar.render();
 	});
-	
-	
+
 	return this;
-	
 };
 
 
@@ -1718,7 +1715,7 @@ function _exclEndDay(end, allDay) {
 function lazySegBind(container, segs, bindHandlers) { //zhangjia 绑定事件
 
 	container.unbind('mouseover').mouseover(function(ev) {
-
+		debugger;
 		var parent=ev.target, e,
 			i, seg;
 		while (parent != this) {
@@ -4704,7 +4701,7 @@ function View(element, calendar, viewName) {
 	}
 	
 	
-	// attaches eventClick, eventMouseover, eventMouseout
+	// 绑定事件点击之类的 eventClick, eventMouseover, eventMouseout
 	function eventElementHandlers(event, eventElement) {
 		eventElement
 			.click(function(ev) {
@@ -5212,7 +5209,6 @@ function DayEventRenderer() {
 	// Set `doAppend` to `true` for rendering elements without clearing the existing container.
 	// Set `doRowHeights` to allow setting the height of each row, to compensate for vertical event overflow.
 	function _renderDayEvents(events, doAppend, doRowHeights) {
-		debugger;
 		// where the DOM nodes will eventually end up
 		var finalContainer = getDaySegmentContainer();
 
@@ -5288,6 +5284,7 @@ function DayEventRenderer() {
 	// A "segment" is the same data structure that View.rangeToSegments produces,
 	// with the addition of the `event` property being set to reference the original event.
 	function buildSegmentsForEvent(event) {
+		//zhangjia0112
 		var startDate = event.start;
 		var endDate = exclEndDay(event);
 		var segments = rangeToSegments(startDate, endDate);
@@ -5301,6 +5298,7 @@ function DayEventRenderer() {
 	// Sets the `left` and `outerWidth` property of each segment.
 	// These values are the desired dimensions for the eventual DOM elements.
 	function calculateHorizontals(segments) {
+
 		var isRTL = opt('isRTL');
 		for (var i=0; i<segments.length; i++) {
 			var segment = segments[i];
@@ -5639,7 +5637,6 @@ function DayEventRenderer() {
 
 	// zhangjia
 	function attachHandlers(segments, modifiedEventId) {
-
 		var segmentContainer = getDaySegmentContainer();
 
 		segmentElementEach(segments, function(segment, element, i) {
@@ -5654,11 +5651,13 @@ function DayEventRenderer() {
 		lazySegBind(segmentContainer, segments, bindDaySeg);
 	}
 
-
+	//绑定日视图活动事件 zhangjia
 	function bindDaySeg(event, eventElement, segment) {
-
+		debugger;
 		if (isEventDraggable(event)) {
 			t.draggableDayEvent(event, eventElement, segment); // use `t` so subclasses can override
+		} else {
+			console.log('拖不得');
 		}
 
 		// attach all other handlers.
